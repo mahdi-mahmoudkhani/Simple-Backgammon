@@ -1,4 +1,6 @@
 from abstract import Backgammon
+from typing import List, Tuple, Dict, Optional
+
 
 class MiniMaxBackgammon(Backgammon):
     
@@ -37,3 +39,21 @@ class MiniMaxBackgammon(Backgammon):
             return whiteScore - blackScore
         return blackScore - whiteScore
         
+    def other_player(self, player: str) -> str:
+        return "black" if player == "white" else "white"
+        
+    def make_move(self, move: Tuple[int, int]) -> None:
+        for singleMove in move:
+            start, end = singleMove
+            if self.board[start][0] == 1:
+                self.board[start] = [0, None]
+            else:
+                self.board[start][0] -= 1
+            if self.board[end][1] != self.current_player and self.board[end][0] == 1:
+                self.board[end] = [1, self.current_player]
+                self.bar[self.other_player(self.current_player)] += 1
+            else:
+                self.board[end][0] += 1
+                
+            # add move to move history
+            self.move_history.append(singleMove)
