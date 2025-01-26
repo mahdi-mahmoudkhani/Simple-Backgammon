@@ -68,3 +68,10 @@ class MiniMaxBackgammon(Backgammon):
                 self.board[end][0] -= 1
             self.board[start][0] += 1
         self.move_history.pop()
+    
+    def is_bear_off_possible(self) -> bool:
+        checkRange = range(18) if self.current_player == "white" else range(6, 24)
+        for i in checkRange:
+            if self.board[i][1] == self.current_player:
+                return False
+        return True
