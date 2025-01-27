@@ -1,5 +1,6 @@
 from abstract import Backgammon
 from typing import List, Tuple, Dict, Optional
+import copy
 
 
 class MiniMaxBackgammon(Backgammon):
@@ -43,6 +44,9 @@ class MiniMaxBackgammon(Backgammon):
         return "black" if player == "white" else "white"
         
     def make_move(self, move: Tuple[int, int]) -> None:
+
+        self.move_history.append((move, copy.deepcopy(self.board), copy.deepcopy(self.bar), copy.deepcopy(self.bear_off)))
+
         start, end = move
         if self.board[start][0] == 1:
             self.board[start] = [0, None]
@@ -52,20 +56,18 @@ class MiniMaxBackgammon(Backgammon):
             self.board[end] = [1, self.current_player]
             self.bar[self.other_player(self.current_player)] += 1
         else:
-            self.board[end][0] += 1
-            
-        # add move to move history
-        self.move_history.append(move)
+            self.board[end] = [self.board[end][0] + 1, self.current_player]
 
     def undo_move(self, move: Tuple[int, int]) -> None:
-        start, end = move
-        if self.board[end][1] != self.current_player and self.board[end][0] == 1:
-            self.board[end] = [0, None]
-            self.bar[self.other_player(self.current_player)] -= 1
-        else:
-            self.board[end][0] -= 1
-        self.board[start][0] += 1
-        self.move_history.pop()
+        # use move history to undo the given move
+        # first finidng the move in the move history
+        for i in range(len(self.move_history) - 1, -1, -1):
+            if self.move_history[i][0] == move:
+                break
+        self.board = self.move_history[i][1]
+        self.bar = self.move_history[i][2]
+        self.bear_off = self.move_history[i][3]
+        self.move_history = self.move_history[:i]
     
     def is_bear_off_possible(self) -> bool:
         checkRange = range(18) if self.current_player == "white" else range(6, 24)
@@ -113,3 +115,5 @@ class MiniMaxBackgammon(Backgammon):
             return sequences
         
         sequences = generate_sequences(dice_roll, self.current_player)
+
+        return sequences
