@@ -96,5 +96,20 @@ class MiniMaxBackgammon(Backgammon):
                             moves.append([(i, end_pos)])
             return moves
         
-        first_moves = generate_moves([dice_roll[0]], self.current_player)
-        second_moves = generate_moves([dice_roll[1]], self.current_player)
+        def generate_sequences(dice: List[int], player: str) -> List[List[Tuple[int, int]]]:
+            '''
+            Generate all possible sequences of moves for the given dice values. It does this by generating moves for the first die, applying each move, and then generating moves for the second die using the new board state.
+            It handles both sequences: first dice 1 then dice 2 and first dice 2 then dice 1.
+            '''
+            sequences = []
+            for order in [(0, 1), (1, 0)]:
+                first_moves = generate_moves([dice[order[0]]], player)
+                for first_move in first_moves:
+                    self.make_move(first_move[0])
+                    second_moves = generate_moves([dice[order[1]]], player)
+                    for second_move in second_moves:
+                        sequences.append(first_move + second_move)
+                    self.undo_move(first_move[0])
+            return sequences
+        
+        sequences = generate_sequences(dice_roll, self.current_player)
