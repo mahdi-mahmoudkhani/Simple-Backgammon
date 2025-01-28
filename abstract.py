@@ -7,7 +7,8 @@ random.seed(42)
 
 class Backgammon(ABC):
     def __init__(self) -> None:
-        self.board: List[Tuple[int, Optional[str]]] = [[0, None] for _ in range(24)]
+        self.board: List[Tuple[int, Optional[str]]] = [[0, None]
+                                                       for _ in range(24)]
         self.bar: Dict[str, int] = {"white": 0, "black": 0}
         self.bear_off: Dict[str, int] = {"white": 0, "black": 0}
         self.current_player: str = "white"
@@ -66,7 +67,8 @@ class Backgammon(ABC):
             return
 
         best_sequence: Optional[List[Tuple[int, int]]] = None
-        best_eval: float = -float("inf") if self.is_maximizing() else float("inf")
+        best_eval: float = - \
+            float("inf") if self.is_maximizing() else float("inf")
 
         alpha = -float("inf")
         beta = float("inf")
@@ -75,8 +77,9 @@ class Backgammon(ABC):
             for move in sequence:
                 self.make_move(move)
             self.change_player()
-            
-            eval = self.expectimax(self.max_depth, self.is_maximizing(), alpha, beta)
+
+            eval = self.expectimax(
+                self.max_depth, self.is_maximizing(), alpha, beta)
 
             self.change_player()
             for move in reversed(sequence):
@@ -105,7 +108,7 @@ class Backgammon(ABC):
             self.display_board()
             self.play_turn()
             self.change_player()
-        
+
         if self.is_game_over():
             winner = "white" if self.bear_off["white"] == 15 else "black"
             print(f"{winner} wins the game!")
@@ -114,9 +117,11 @@ class Backgammon(ABC):
     def display_board(self) -> None:
         print("\nBackgammon Board:")
         print(" ".join([f"{11 - i:2}" for i in range(12)]))
-        print(" ".join([self.format_point(self.board[i]) for i in range(11, -1, -1)]))
+        print(" ".join([self.format_point(self.board[i])
+              for i in range(11, -1, -1)]))
         print(f"Bar: W-{self.bar['white']} B-{self.bar['black']}")
-        print(" ".join([self.format_point(self.board[i]) for i in range(12, 24)]))
+        print(" ".join([self.format_point(self.board[i])
+              for i in range(12, 24)]))
         print(" ".join([f"{i:2}" for i in range(12, 24)]))
         print(
             f"Bear Off: White - {self.bear_off['white']}, Black - {self.bear_off['black']}\n"

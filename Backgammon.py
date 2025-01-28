@@ -1,10 +1,10 @@
 from abstract import Backgammon
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple
 import copy
 
 
-class MiniMaxBackgammon(Backgammon):
-    
+class ExpectimaxBackgammon(Backgammon):
+
     def __init__(self) -> None:
         super().__init__()
         self.max_depth = 2
@@ -27,24 +27,23 @@ class MiniMaxBackgammon(Backgammon):
                 blackScore += i * self.board[i][0]
                 if self.board[i][0] == 1:  # Penalty for lonely pieces
                     blackScore += 10
-        
+
         # Add penalties for pieces on the bar
         whiteScore += 24 * self.bar['white']
         blackScore += 24 * self.bar['black']
-        
+
         # Add rewards for pieces that have been borne off
         whiteScore -= 15 * self.bear_off['white']
         blackScore -= 15 * self.bear_off['black']
-        
-        if self.current_player == "white":
-            return whiteScore - blackScore
+
         return whiteScore - blackScore if not self.is_maximizing() else blackScore - whiteScore
-        
+
     def other_player(self, player: str) -> str:
         return "black" if player == "white" else "white"
-        
+
     def make_move(self, move: Tuple[int, int]) -> None:
-        self.move_history.append((move, copy.deepcopy(self.board), copy.deepcopy(self.bar), copy.deepcopy(self.bear_off)))
+        self.move_history.append((move, copy.deepcopy(
+            self.board), copy.deepcopy(self.bar), copy.deepcopy(self.bear_off)))
 
         start, end = move
         if start == 24 or start == -1:
@@ -73,14 +72,15 @@ class MiniMaxBackgammon(Backgammon):
         self.bar = self.move_history[i][2]
         self.bear_off = self.move_history[i][3]
         self.move_history = self.move_history[:i]
-    
+
     def is_bear_off_possible(self) -> bool:
-        checkRange = range(18) if self.current_player == "white" else range(6, 24)
+        checkRange = range(
+            18) if self.current_player == "white" else range(6, 24)
         for i in checkRange:
             if self.board[i][1] == self.current_player:
                 return False
         return True
-    
+
     def get_possible_sequences(self, dice_roll: List[int]) -> List[List[Tuple[int, int]]]:
         '''
         The idea is to generate all possible moves for each die in the dice roll and then combine them to form sequences.
@@ -116,7 +116,7 @@ class MiniMaxBackgammon(Backgammon):
                             if self.is_bear_off_possible() and end_pos == -1 and player == "black":
                                 moves.append([(i, -1)])
             return moves
-        
+
         def generate_sequences(dice: List[int], player: str) -> List[List[Tuple[int, int]]]:
             '''
             Generate all possible sequences of moves for the given dice values. It does this by generating moves for the first die, applying each move, and then generating moves for the second die using the new board state.
@@ -131,17 +131,18 @@ class MiniMaxBackgammon(Backgammon):
                     if second_moves:
                         for second_move in second_moves:
                             sequences.append(first_move + second_move)
-                    else: 
+                    else:
                         sequences.append(first_move + [])
                     self.undo_move(first_move[0])
             return sequences
-        
+
         sequences = generate_sequences(dice_roll, self.current_player)
 
         # remove duplicates and sort the moves
-        sequences = list(set([tuple(sorted(seq, reverse= self.current_player != "white")) for seq in sequences]))
+        sequences = list(set(
+            [tuple(sorted(seq, reverse=self.current_player != "white")) for seq in sequences]))
         return sequences
-    
+
     def expectimax(self, depth: int, maximizing_player: bool, alpha, beta) -> float:
         '''
         This function implements the alpha-beta pruning algorithm. It is a recursive function that evaluates the board state at the given depth and returns the best value of the board state. It uses the evaluate_board function to evaluate the board state. It generates all possible sequences of moves for the dice roll and then applies each sequence to the board state. It then recursively calls itself with the new board state and the depth decremented by 1. It alternates between maximizing and minimizing nodes based on the maximizing_player flag. It returns the maximum value if it is a maximizing node and the minimum value if it is a minimizing node. It uses alpha and beta values to prune branches that cannot produce a better result.
