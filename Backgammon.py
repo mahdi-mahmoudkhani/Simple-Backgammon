@@ -141,3 +141,34 @@ class MiniMaxBackgammon(Backgammon):
         # remove duplicates and sort the moves
         sequences = list(set([tuple(sorted(seq, reverse= self.current_player != "white")) for seq in sequences]))
         return sequences
+    
+    def expectimax(self, depth: int, maximizing_player: bool) -> float:
+        '''
+        This function implements the expectimax algorithm. It is a recursive function that evaluates the board
+        state at the given depth and returns the expected value of the board state. It uses the evaluate_board
+        function to evaluate the board state. It generates all possible sequences of moves for the dice roll and 
+        then applies each sequence to the board state. It then recursively calls itself with the new board state
+        and the depth decremented by 1. It alternates between maximizing and chance nodes based on the maximizing_player flag.
+        It returns the maximum value if it is a maximizing node and the average value if it is a chance node.'''
+        
+        if depth == 1 or self.is_game_over():
+            return self.evaluate_board()
+        dice_rolls = [(i, j) for i in range(1, 7) for j in range(1, 7)]
+        if maximizing_player:
+            max_eval = -float("inf")
+            for dice_roll in dice_rolls:
+                move_sequences = self.get_possible_sequences(list(dice_roll))
+                for sequence in move_sequences:
+                    for move in sequence:
+                        self.make_move(move)
+                    self.change_player()
+                    eval = self.expectimax(depth - 1, False)
+                    self.change_player()
+                    for move in reversed(sequence):
+                        self.undo_move(move)
+                    max_eval = max(max_eval, eval)
+            return max_eval
+
+
+
+
