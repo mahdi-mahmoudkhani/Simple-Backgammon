@@ -67,20 +67,17 @@ class Backgammon(ABC):
 
         best_sequence: Optional[List[Tuple[int, int]]] = None
         best_eval: float = -float("inf") if self.is_maximizing() else float("inf")
-        
-        eval = self.expectimax(self.max_depth, self.is_maximizing())
-        
+
+        alpha = -float("inf")
+        beta = float("inf")
+
         for sequence in move_sequences:
             for move in sequence:
                 self.make_move(move)
             self.change_player()
             
-            ### your code here ###
+            eval = self.expectimax(self.max_depth, self.is_maximizing(), alpha, beta)
 
-            eval: Optional[int] = None
-
-            ### your code ends here ###
-            
             self.change_player()
             for move in reversed(sequence):
                 self.undo_move(move)
@@ -89,6 +86,14 @@ class Backgammon(ABC):
             ):
                 best_eval = eval
                 best_sequence = sequence
+
+            if self.is_maximizing():
+                alpha = max(alpha, eval)
+            else:
+                beta = min(beta, eval)
+
+            if beta <= alpha:
+                break
 
         if best_sequence:
             for move in best_sequence:
@@ -104,6 +109,7 @@ class Backgammon(ABC):
         if self.is_game_over():
             winner = "white" if self.bear_off["white"] == 15 else "black"
             print(f"{winner} wins the game!")
+            self.display_board()
 
     def display_board(self) -> None:
         print("\nBackgammon Board:")
