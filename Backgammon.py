@@ -7,7 +7,7 @@ class MiniMaxBackgammon(Backgammon):
     
     def __init__(self) -> None:
         super().__init__()
-        self.max_depth = 3
+        self.max_depth = 2
 
     def evaluate_board(self) -> int:
         '''
