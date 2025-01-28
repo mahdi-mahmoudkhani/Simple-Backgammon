@@ -91,11 +91,25 @@ class MiniMaxBackgammon(Backgammon):
             '''
             moves = []
             for die in dice:
-                for i in range(24):
-                    if self.board[i][1] == player:
-                        end_pos = i + die if player == "white" else i - die
-                        if 0 <= end_pos < 24 and (self.board[end_pos][1] in [None, player] or self.board[end_pos][0] == 1):
-                            moves.append([(i, end_pos)])
+                if self.bar[player] > 0:
+                    # if player has pieces on the bar, only allow moves from the bar
+                    if player == "white":
+                        if self.board[die - 1][1] in [None, "white"]:
+                            moves.append([(-1, die - 1)])
+                    else:
+                        if self.board[24 - die][1] in [None, "black"]:
+                            moves.append([(24, 24 - die)])
+                else:
+                    for i in range(24):
+                        if self.board[i][1] == player:
+                            end_pos = i + die if player == "white" else i - die
+                            if 0 <= end_pos < 24 and (self.board[end_pos][1] in [None, player] or self.board[end_pos][0] == 1):
+                                moves.append([(i, end_pos)])
+                            # if bearin off is possible, add bear off move
+                            if self.is_bear_off_possible() and end_pos == 24 and player == "white":
+                                moves.append([(i, 24)])
+                            if self.is_bear_off_possible() and end_pos == -1 and player == "black":
+                                moves.append([(i, -1)])
             return moves
         
         def generate_sequences(dice: List[int], player: str) -> List[List[Tuple[int, int]]]:
@@ -116,6 +130,5 @@ class MiniMaxBackgammon(Backgammon):
         
         sequences = generate_sequences(dice_roll, self.current_player)
 
-        # remove duplicates and sort the moves
-        sequences = list(set([tuple(sorted(seq, reverse= self.current_player != "white")) for seq in sequences]))
+        
         return sequences
