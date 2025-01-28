@@ -128,8 +128,11 @@ class MiniMaxBackgammon(Backgammon):
                 for first_move in first_moves:
                     self.make_move(first_move[0])
                     second_moves = generate_moves([dice[order[1]]], player)
-                    for second_move in second_moves:
-                        sequences.append(first_move + second_move)
+                    if second_moves:
+                        for second_move in second_moves:
+                            sequences.append(first_move + second_move)
+                    else: 
+                        sequences.append(first_move + [])
                     self.undo_move(first_move[0])
             return sequences
         
