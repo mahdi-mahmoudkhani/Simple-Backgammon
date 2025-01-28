@@ -38,7 +38,7 @@ class MiniMaxBackgammon(Backgammon):
         
         if self.current_player == "white":
             return whiteScore - blackScore
-        return blackScore - whiteScore
+        return whiteScore - blackScore if not self.is_maximizing() else blackScore - whiteScore
         
     def other_player(self, player: str) -> str:
         return "black" if player == "white" else "white"
