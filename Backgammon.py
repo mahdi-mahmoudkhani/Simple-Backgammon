@@ -168,7 +168,20 @@ class MiniMaxBackgammon(Backgammon):
                         self.undo_move(move)
                     max_eval = max(max_eval, eval)
             return max_eval
-
+        else:
+            total_eval = 0
+            for dice_roll in dice_rolls:
+                move_sequences = self.get_possible_sequences(list(dice_roll))
+                for sequence in move_sequences:
+                    for move in sequence:
+                        self.make_move(move)
+                    self.change_player()
+                    eval = self.expectimax(depth - 1, True)
+                    self.change_player()
+                    for move in reversed(sequence):
+                        self.undo_move(move)
+                    total_eval += eval
+            return total_eval
 
 
 
