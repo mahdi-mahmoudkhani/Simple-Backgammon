@@ -44,19 +44,24 @@ class MiniMaxBackgammon(Backgammon):
         return "black" if player == "white" else "white"
         
     def make_move(self, move: Tuple[int, int]) -> None:
-
         self.move_history.append((move, copy.deepcopy(self.board), copy.deepcopy(self.bar), copy.deepcopy(self.bear_off)))
-
-        start, end = move
-        if self.board[start][0] == 1:
-            self.board[start] = [0, None]
+        
+        if move[1] == 24 or move[1] == -1:
+            self.bear_off[self.current_player] += 1
         else:
-            self.board[start][0] -= 1
-        if self.board[end][1] != self.current_player and self.board[end][0] == 1:
-            self.board[end] = [1, self.current_player]
-            self.bar[self.other_player(self.current_player)] += 1
-        else:
-            self.board[end] = [self.board[end][0] + 1, self.current_player]
+            start, end = move
+            if start == 24 or start == -1:
+                self.bar[self.current_player] -= 1
+            elif self.board[start][0] == 1:
+                self.board[start] = [0, None]
+            else:
+                self.board[start][0] -= 1
+                
+            if self.board[end][1] != self.current_player and self.board[end][0] == 1:
+                self.board[end] = [1, self.current_player]
+                self.bar[self.other_player(self.current_player)] += 1
+            else:
+                self.board[end] = [self.board[end][0] + 1, self.current_player]
 
     def undo_move(self, move: Tuple[int, int]) -> None:
         # use move history to undo the given move
