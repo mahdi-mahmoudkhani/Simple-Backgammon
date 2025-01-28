@@ -45,18 +45,18 @@ class MiniMaxBackgammon(Backgammon):
         
     def make_move(self, move: Tuple[int, int]) -> None:
         self.move_history.append((move, copy.deepcopy(self.board), copy.deepcopy(self.bar), copy.deepcopy(self.bear_off)))
-        
-        if move[1] == 24 or move[1] == -1:
+
+        start, end = move
+        if start == 24 or start == -1:
+            self.bar[self.current_player] -= 1
+        elif self.board[start][0] == 1:
+            self.board[start] = [0, None]
+        else:
+            self.board[start][0] -= 1
+
+        if end == 24 or end == -1:
             self.bear_off[self.current_player] += 1
         else:
-            start, end = move
-            if start == 24 or start == -1:
-                self.bar[self.current_player] -= 1
-            elif self.board[start][0] == 1:
-                self.board[start] = [0, None]
-            else:
-                self.board[start][0] -= 1
-                
             if self.board[end][1] != self.current_player and self.board[end][0] == 1:
                 self.board[end] = [1, self.current_player]
                 self.bar[self.other_player(self.current_player)] += 1
