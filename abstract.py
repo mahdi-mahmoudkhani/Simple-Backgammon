@@ -67,7 +67,9 @@ class Backgammon(ABC):
 
         best_sequence: Optional[List[Tuple[int, int]]] = None
         best_eval: float = -float("inf") if self.is_maximizing() else float("inf")
-
+        
+        eval = self.expectimax(self.max_depth, self.is_maximizing())
+        
         for sequence in move_sequences:
             for move in sequence:
                 self.make_move(move)
