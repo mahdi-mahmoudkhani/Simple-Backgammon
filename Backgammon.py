@@ -114,6 +114,6 @@ class MiniMaxBackgammon(Backgammon):
                     self.undo_move(first_move[0])
             return sequences
         
-        sequences = generate_sequences(dice_roll, self.current_player)
-
+        # remove duplicates and sort the moves
+        sequences = list(set([tuple(sorted(seq, reverse= self.current_player != "white")) for seq in sequences]))
         return sequences
