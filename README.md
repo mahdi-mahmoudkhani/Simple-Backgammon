@@ -19,26 +19,26 @@ Before running the game, install the required dependencies:
 
 ```sh
 pip install tabulate
-
-▶️ How to Run
+```
+## ▶️ How to Run
 
 Simply run the main script:
-
+```sh
 python main.py
-
+```
 The AI will play against itself, and the board state will be displayed after each move.
 
-📂 Project Structure
-
+## 📂 Project Structure
+```sh
 📂 Backgammon-AI
 │── 📄 Backgammon.py           # Abstract class defining the game structure
 │── 📄 ExpectimaxBackgammon.py # AI implementation using Expectimax algorithm
 │── 📄 main.py                 # Entry point to run the game
 │── 📄 README.md               # Project documentation
+```
+## 🛠 How It Works
 
-🛠 How It Works
-
-1️⃣ Board Representation
+### 1️⃣ Board Representation
 
 The board consists of 24 points, a bar, and bear-off areas. Pieces are stored in a list:
 
@@ -46,41 +46,41 @@ self.board: List[Tuple[int, Optional[str]]] = [[0, None] for _ in range(24)]
 
 Each entry represents the number of pieces and the player ("white" or "black").
 
-2️⃣ Rolling the Dice
+### 2️⃣ Rolling the Dice
 
 The dice roll is simulated using:
-
+```sh
 def roll_dice(self) -> List[int]:
     return [random.randint(1, 6), random.randint(1, 6)]
-
+```
 This function generates two random numbers between 1 and 6.
 
-3️⃣ Generating Possible Moves
+### 3️⃣ Generating Possible Moves
 
 The function get_possible_sequences() determines all valid moves based on the dice roll:
-
+```sh
 def get_possible_sequences(self, dice_roll: List[int]) -> List[List[Tuple[int, int]]]:
     # Generates all valid move sequences based on the dice values.
-
+```
 It accounts for blocked points, hitting opponent pieces, and bear-off conditions.
 
-4️⃣ Move Execution & Undo
+### 4️⃣ Move Execution & Undo
 
 Each move modifies the game state:
-
+```sh
 def make_move(self, move: Tuple[int, int]) -> None:
     self.move_history.append((move, copy.deepcopy(self.board)))
     # Update board state based on move
-
+```
 To revert a move, the game restores the previous state:
-
+```sh
 def undo_move(self, move: Tuple[int, int]) -> None:
     self.board = self.move_history.pop()[1]
-
-5️⃣ Expectimax Algorithm
+```
+### 5️⃣ Expectimax Algorithm
 
 The AI uses Expectimax, a variation of the Minimax algorithm that accounts for randomness in dice rolls:
-
+```sh
 def expectimax(self, depth: int, maximizing_player: bool, alpha, beta) -> float:
     if depth == 1 or self.is_game_over():
         return self.evaluate_board()
@@ -115,11 +115,11 @@ def expectimax(self, depth: int, maximizing_player: bool, alpha, beta) -> float:
 	•	Maximizing player aims to maximize their advantage.
 	•	Minimizing player assumes the opponent will play optimally.
 	•	It evaluates board states using a heuristic function.
-
-6️⃣ Heuristic Evaluation
+```
+### 6️⃣ Heuristic Evaluation
 
 The AI assigns a score to each board state:
-
+```sh
 def evaluate_board(self) -> int:
     whiteScore = 0
     blackScore = 0
@@ -138,11 +138,11 @@ def evaluate_board(self) -> int:
 	•	Higher score → Better position for the AI.
 	•	Penalizes isolated pieces and pieces on the bar.
 	•	Rewards progress toward bear-off.
-
-7️⃣ Alpha-Beta Pruning
+```
+### 7️⃣ Alpha-Beta Pruning
 
 To optimize Expectimax, Alpha-Beta Pruning reduces the number of states evaluated:
-
+```sh
 alpha = -float("inf")
 beta = float("inf")
 
@@ -152,9 +152,10 @@ if beta <= alpha:
 	•	Alpha tracks the best guaranteed value for the maximizer.
 	•	Beta tracks the best guaranteed value for the minimizer.
 	•	If Beta ≤ Alpha, further exploration is pruned.
-
+```
+### 8️⃣ Backgammon Board
 🏆 Example Output
-
+```sh
 Backgammon Board:
  11 10  9  8  7  6  5  4  3  2  1  0
 -- -- -- -- B3 -- -- -- -- -- -- W2
@@ -166,6 +167,8 @@ Bear Off: White - 0, Black - 0
 White rolls: [3, 5]
 White makes move: (16, 21)
 White makes move: (11, 16)
+```
+### 9️⃣ Future Improvements
 
 📌 Future Improvements
 	•	📌 Train AI with Reinforcement Learning to improve decision-making.
