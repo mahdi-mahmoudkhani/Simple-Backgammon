@@ -111,40 +111,41 @@ def expectimax(self, depth: int, maximizing_player: bool, alpha, beta) -> float:
                 min_eval = min(min_eval, eval)
         return min_eval
 
-	•	The AI recursively explores possible game states.
-	•	Maximizing player aims to maximize their advantage.
-	•	Minimizing player assumes the opponent will play optimally.
-	•	It evaluates board states using a heuristic function.
+•	The AI recursively explores possible game states.
+•	Maximizing player aims to maximize their advantage.
+•	Minimizing player assumes the opponent will play optimally.
+•	It evaluates board states using a heuristic function.
 ```
 ### 6️⃣ Heuristic Evaluation
 
 The AI assigns a score to each board state:
 ```sh
 def evaluate_board(self) -> int:
-        whiteScore = 0
-        blackScore = 0
-        for i in range(24):
-            if self.board[i][1] == "white":
-                whiteScore += (23 - i) * self.board[i][0]
-                if self.board[i][0] == 1:  # Penalty for lonely pieces
-                    whiteScore += 10
-            elif self.board[i][1] == "black":
-                blackScore += i * self.board[i][0]
-                if self.board[i][0] == 1:  # Penalty for lonely pieces
-                    blackScore += 10
+    whiteScore = 0
+    blackScore = 0
+    for i in range(24):
+        if self.board[i][1] == "white":
+            whiteScore += (23 - i) * self.board[i][0]
+            if self.board[i][0] == 1:  # Penalty for lonely pieces
+                whiteScore += 10
+        elif self.board[i][1] == "black":
+            blackScore += i * self.board[i][0]
+            if self.board[i][0] == 1:  # Penalty for lonely pieces
+                blackScore += 10
 
-        # Add penalties for pieces on the bar
-        whiteScore += 24 * self.bar['white']
-        blackScore += 24 * self.bar['black']
+    # Add penalties for pieces on the bar
+    whiteScore += 24 * self.bar['white']
+    blackScore += 24 * self.bar['black']
 
-        # Add rewards for pieces that have been borne off
-        whiteScore -= 15 * self.bear_off['white']
-        blackScore -= 15 * self.bear_off['black']
+    # Add rewards for pieces that have been borne off
+    whiteScore -= 15 * self.bear_off['white']
+    blackScore -= 15 * self.bear_off['black']
+
     return whiteScore - blackScore if not self.is_maximizing() else blackScore - whiteScore
 
-	•	Higher score → Better position for the AI.
-	•	Penalizes isolated pieces and pieces on the bar.
-	•	Rewards progress toward bear-off.
+•	Lower score → Better position for the AI.
+•	Penalizes isolated pieces and pieces on the bar.
+•	Rewards progress toward bear-off.
 ```
 ### 7️⃣ Alpha-Beta Pruning
 
@@ -156,14 +157,13 @@ beta = float("inf")
 if beta <= alpha:
     break
 
-	•	Alpha tracks the best guaranteed value for the maximizer.
-	•	Beta tracks the best guaranteed value for the minimizer.
-	•	If Beta ≤ Alpha, further exploration is pruned.
+•	Alpha tracks the best guaranteed value for the maximizer.
+•	Beta tracks the best guaranteed value for the minimizer.
+•	If Beta ≤ Alpha, further exploration is pruned.
 ```
 ### 8️⃣ Backgammon Board
 🏆 Example Output
 ```sh
-Backgammon Board:
 11 10  9  8  7  6  5  4  3  2  1  0
 W5 -- -- -- B3 -- B5 -- -- -- -- W2
 Bar: W-0 B-0
