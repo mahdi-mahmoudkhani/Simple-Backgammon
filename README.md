@@ -41,9 +41,9 @@ The AI will play against itself, and the board state will be displayed after eac
 ### 1️⃣ Board Representation
 
 The board consists of 24 points, a bar, and bear-off areas. Pieces are stored in a list:
-
+```sh
 self.board: List[Tuple[int, Optional[str]]] = [[0, None] for _ in range(24)]
-
+```
 Each entry represents the number of pieces and the player ("white" or "black").
 
 ### 2️⃣ Rolling the Dice
