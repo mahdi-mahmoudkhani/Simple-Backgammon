@@ -121,18 +121,25 @@ def expectimax(self, depth: int, maximizing_player: bool, alpha, beta) -> float:
 The AI assigns a score to each board state:
 ```sh
 def evaluate_board(self) -> int:
-    whiteScore = 0
-    blackScore = 0
-    for i in range(24):
-        if self.board[i][1] == "white":
-            whiteScore += (23 - i) * self.board[i][0]
-        elif self.board[i][1] == "black":
-            blackScore += i * self.board[i][0]
-    
-    # Consider pieces on the bar
-    whiteScore += 24 * self.bar['white']
-    blackScore += 24 * self.bar['black']
+        whiteScore = 0
+        blackScore = 0
+        for i in range(24):
+            if self.board[i][1] == "white":
+                whiteScore += (23 - i) * self.board[i][0]
+                if self.board[i][0] == 1:  # Penalty for lonely pieces
+                    whiteScore += 10
+            elif self.board[i][1] == "black":
+                blackScore += i * self.board[i][0]
+                if self.board[i][0] == 1:  # Penalty for lonely pieces
+                    blackScore += 10
 
+        # Add penalties for pieces on the bar
+        whiteScore += 24 * self.bar['white']
+        blackScore += 24 * self.bar['black']
+
+        # Add rewards for pieces that have been borne off
+        whiteScore -= 15 * self.bear_off['white']
+        blackScore -= 15 * self.bear_off['black']
     return whiteScore - blackScore if not self.is_maximizing() else blackScore - whiteScore
 
 	•	Higher score → Better position for the AI.
@@ -157,16 +164,12 @@ if beta <= alpha:
 🏆 Example Output
 ```sh
 Backgammon Board:
- 11 10  9  8  7  6  5  4  3  2  1  0
--- -- -- -- B3 -- -- -- -- -- -- W2
+11 10  9  8  7  6  5  4  3  2  1  0
+W5 -- -- -- B3 -- B5 -- -- -- -- W2
 Bar: W-0 B-0
--- -- -- -- W5 -- -- B3 -- -- -- --
+B5 -- -- -- W3 -- W5 -- -- -- -- B2
 12 13 14 15 16 17 18 19 20 21 22 23
 Bear Off: White - 0, Black - 0
-
-White rolls: [3, 5]
-White makes move: (16, 21)
-White makes move: (11, 16)
 ```
 ### 9️⃣ Future Improvements
 
