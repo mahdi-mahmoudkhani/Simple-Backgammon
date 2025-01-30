@@ -138,9 +138,6 @@ class ExpectimaxBackgammon(Backgammon):
 
         sequences = generate_sequences(dice_roll, self.current_player)
 
-        # remove duplicates and sort the moves
-        sequences = list(set(
-            [tuple(sorted(seq, reverse=self.current_player != "white")) for seq in sequences]))
         return sequences
 
     def expectimax(self, depth: int, maximizing_player: bool, alpha, beta) -> float:
@@ -169,7 +166,7 @@ class ExpectimaxBackgammon(Backgammon):
                         break
             return max_eval
         else:
-            min_eval = float("inf")
+            expected_value = 0
             for dice_roll in dice_rolls:
                 move_sequences = self.get_possible_sequences(list(dice_roll))
                 for sequence in move_sequences:
@@ -180,8 +177,5 @@ class ExpectimaxBackgammon(Backgammon):
                     self.change_player()
                     for move in reversed(sequence):
                         self.undo_move(move)
-                    min_eval = min(min_eval, eval)
-                    beta = min(beta, eval)
-                    if beta <= alpha:
-                        break
-            return min_eval
+                    expected_value += eval
+            return expected_value
